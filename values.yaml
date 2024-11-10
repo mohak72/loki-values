@@ -1,0 +1,38 @@
+loki:
+  commonConfig:
+    replication_factor: 3
+  schemaConfig:
+    configs:
+      - from: "2024-04-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+  pattern_ingester:
+      enabled: true
+  limits_config:
+    allow_structured_metadata: true
+    volume_enabled: true
+    retention_period: 672h # 28 days retention
+  compactor:
+    retention_enabled: true
+  ruler:
+    enable_api: true
+
+storage_config:
+  filesystem:
+    directory: /data/loki # Specify the directory where logs will be stored on the PVC
+
+deploymentMode: SingleBinary
+
+singleBinary:
+  replicas: 3
+
+persistence:
+  enabled: true
+  storageClassName: "default"
+  accessModes:
+    - ReadWriteOnce
+  size: 500Gi
